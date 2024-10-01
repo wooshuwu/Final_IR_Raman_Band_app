@@ -1,0 +1,11 @@
+/* styles.css */
+QLabel.regulartext {
+    font-size: 20px;
+    text-align: justify;
+    text-align-last: justify;
+}
+
+QLabel.title {
+    font-size: 32px;
+    font-weight: bold;
+}
