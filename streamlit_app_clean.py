@@ -31,15 +31,14 @@ file_vars = {"CO2": "CO2",
 file_list = list(file_vars)
 
 for i in range(len(file_vars)):
-    # print(f"{list(file_vars)[i]}")
     file_list[i] = open_file(file_list[i], fold_name)
     
 for f in file_vars.values():
     file_paths.append(f"{fold_name}\\{f}.xyz")
 
 vsepr_molecule_sheet = "VSEPR_Mol"
-character_table_path = r"C:\Users\artsy\OneDrive - UNT System\Research\code2\pythonExperiments\Baba_apps\charactertables_v4.xlsx"
-point_group_path = r"C:\Users\artsy\OneDrive - UNT System\Research\code2\pythonExperiments\Baba_apps\point_groups.xlsx"
+character_table_path = r"charactertables_v4.xlsx"
+point_group_path = r"point_groups.xlsx"
 point_group_geometry_sheet = "Geometry_PG"
 point_group_symmetry_sheet = "Symmetry_PG"
 
