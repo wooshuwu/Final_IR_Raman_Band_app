@@ -1,7 +1,6 @@
 import py3Dmol
 import streamlit as st
 from stmol import showmol
-import py3Dmol
 import numpy as np
 import pandas as pd
 import datetime
@@ -12,12 +11,8 @@ from app_funcs import *
 
 
 # @title Open .xyz file with cartesian coordinates
-fold_name = "C:\\Users\\artsy\\OneDrive - UNT System\\Research\\code2\\pythonExperiments\\Baba_apps\\Group_theory_for_IR\\Molecules"
+fold_name = "Molecules"
 file_paths = []
-
-style_path = r"C:\Users\artsy\OneDrive - UNT System\Research\code2\pythonExperiments\Baba_apps\streamlit_styles.css"
-with open(style_path, "r") as f:
-    styles = f.read()
     
 file_vars = {"CO2": "CO2", 
              "BH3": "BH3", 

@@ -1,0 +1,6 @@
+py3Dmol
+stmol
+numpy
+pandas
+datetime
+copy
