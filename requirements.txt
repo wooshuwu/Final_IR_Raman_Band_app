@@ -5,3 +5,4 @@ pandas
 ipywidgets
 ipython_genutils
 sympy
+openpyxl
