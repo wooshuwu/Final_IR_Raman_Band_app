@@ -3,3 +3,4 @@ stmol
 numpy
 pandas
 ipywidgets
+ipython_genutils
