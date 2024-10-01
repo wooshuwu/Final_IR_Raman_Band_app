@@ -4,3 +4,4 @@ numpy
 pandas
 ipywidgets
 ipython_genutils
+sympy
