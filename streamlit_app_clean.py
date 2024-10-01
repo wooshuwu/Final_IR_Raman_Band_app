@@ -96,11 +96,11 @@ color_options = {
 def geometry_change():
     # Create a selectbox for color style
     # Get the current date and time
-    now = datetime.datetime.now()
+    # now = datetime.datetime.now()
 
-    # Format the date and time
-    formatted_datetime = now.strftime("%m-%d-%Y %H:%M:%S")
-    print(f"NEW RUN ({formatted_datetime})---------------------------------------------------")
+    # # Format the date and time
+    # formatted_datetime = now.strftime("%m-%d-%Y %H:%M:%S")
+    # print(f"NEW RUN ({formatted_datetime})---------------------------------------------------")
     selected_color_style = st.sidebar.selectbox('Select Color Style', color_styles)
 
     # Create a selectbox for style
