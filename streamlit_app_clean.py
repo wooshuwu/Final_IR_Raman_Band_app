@@ -9,6 +9,8 @@ import copy
 
 from app_funcs import * 
 
+website_name = "unt-predicting-ir-raman-bands"
+st.set_page_config(page_title=website_name)
 
 # @title Open .xyz file with cartesian coordinates
 fold_name = "Molecules"
