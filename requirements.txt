@@ -1,5 +1,5 @@
 py3Dmol
 stmol
 numpy
-pandas
+pandas==2.2.3
 copy
