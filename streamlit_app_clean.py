@@ -26,7 +26,7 @@ file_vars = {"CO2": "CO2",
              "XeF2": "XeF2",
              "FeCl6": "FeCl6",
              "ClF5": "ClF5",
-             "PtCL4": "PtCL4"
+             "PtCl4": "PtCl4"
              }
 file_list = list(file_vars)
 
