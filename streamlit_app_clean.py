@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import datetime
 import copy
-# import datetime
 # from st_aggrid import AgGrid
 
 from app_funcs import * 
@@ -105,14 +104,12 @@ def geometry_change():
     # formatted_datetime = now.strftime("%m-%d-%Y %H:%M:%S")
     # print(f"NEW RUN ({formatted_datetime})---------------------------------------------------")
     
-    st.markdown(pd.__version__)
     selected_color_style = st.sidebar.selectbox('Select Color Style', color_styles)
 
     # Create a selectbox for style
     selected_style = st.sidebar.selectbox('Select Style', styles)
     
     idx2 = [group["Geometry"] for group in groups].index(selected_geometry)
-    # st.markdown(f"Index: {idx2}, {selected_geometry}")
     
     point_group = groups[idx2]['Point Group']
     geometry = groups[idx2]['Geometry']
@@ -184,12 +181,6 @@ def geometry_change():
     gamma_total_table.iat[1,0] = f"$\#_{{{number_unmoved_label}}}$"
     gamma_total_table.iat[2,0] = f"{gamma_total_label}"
     st.markdown(gamma_total_table.to_markdown(index = False))
-    
-    # C2_1 = C2,C2_1=c2_matrix_z(atoms)
-    # # C2_1 = C2_1.astype(float)
-    # st.markdown(f"C2_1: {C2_1}")
-    # st.markdown(f"Atoms: {atoms}")
-    # st.markdown(f"{unmoved_atoms_count(C2_1, atoms)}")
     
     st.markdown(f"### Breakdown of {gamma_total_label} into irreducible representations")
     irreducible_table = calculate_irreducible_representations(char_table_raw_df, order, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients)

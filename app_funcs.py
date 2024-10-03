@@ -1,13 +1,9 @@
-#@title *Now run symmetry operations as arrays*
-
 import sympy as sp
 import math
 from numpy.linalg import multi_dot
 import numpy as np
 import pandas as pd
 import re
-
-###These are the some symmetry operations
 
 def file_matrix(file):
     split=file.split()
@@ -50,7 +46,6 @@ def format_rotational_latex(df, column_name):
   for item in df[column_name]:
     if(pd.notnull(item)):
       components = str(item).split(",")
-      # print(f"components: {components}")
       str_all = ""
       for component in components:
         component = component.replace(" ", "")
@@ -92,7 +87,6 @@ def format_char_table_header(s: str) -> str:
             return s
     else:
         return s
-
 
 def format_superscripts(s):
     result = ""
@@ -159,7 +153,6 @@ def identity_matrix(atoms):
   E_matrix=np.dot(atoms,E)
   return(E,E_matrix.astype(float))
 
-
 def c4_matrix(atoms): #This is a 90 degree proper rotation on Z-axis
   C4=np.array([[round(sp.cos(sp.pi/2),4),(round(-sp.sin(sp.pi/2), 4)),0],[round(sp.sin(sp.pi/2), 4),(round(sp.cos(sp.pi/2), 4)),0],[0,0,1]])
   c4_matrix=np.dot(atoms,C4)
@@ -195,14 +188,6 @@ def c3_matrix_z(atoms): # This is a C3 (120 degree) rotation on the Z-axis
   C3=np.array([[round(sp.cos(sp.pi/1.5), 8),(round(-sp.sin(sp.pi/1.5), 8)),0],[round(sp.sin(sp.pi/1.5),8),(round(sp.cos(sp.pi/1.5), 8)) ,0],[0,0,1]])
   c3_matrix=np.dot(atoms,C3)
   return(C3,c3_matrix.astype(float))
-"""def c3_matrix_z(): # The result is thesame as the above commented lines of code
-  theta = 2 * math.pi / 3
-  c3 = np.array([[-math.cos(theta), -math.sin(theta), 0],
-                           [math.sin(theta), -math.cos(theta), 0],
-                           [0, 0, 1]])
-  c3_matrix=np.dot(atoms,c3)
-  return(c3,c3_matrix)"""
-
 
 def c_3_matrix_x(atoms): # This is a C3 (120 degree) rotation on x-axis
   C_3=np.array([[1,0,0],[0,round(sp.cos(sp.pi/1.5), 4),(round(-sp.sin(sp.pi/1.5), 4))],[0,round(sp.sin(sp.pi/1.5),4),(round(sp.cos(sp.pi/1.5),4))]])
@@ -315,11 +300,8 @@ def unmoved_atoms_count(symmetry, atoms):
   row_index=0
   for current_row in symmetry:
     match_bool = np.array_equal(current_row, atoms[row_index])
-    # print(f"EQUAL: {match_bool} Rho: {rho} current row: {current_row}, atoms[row_index]: {atoms[row_index]}")
     if np.array_equal(current_row, atoms[row_index]):
-        rho += 1
-        # print(f"i: {current_row} rho: {rho}")
-    
+        rho += 1    
     row_index += 1
   return rho
 
@@ -365,7 +347,6 @@ def apply_symm(pg, natoms, atoms):
         sh,sh_1=sigmah(atoms)
         sv,sv_1=sigmav(atoms)
         sd,sd_1=sigmad(atoms)
-        print(f"I: \n{I_1} \natoms: \n{atoms} \n{unmoved_atoms_count(I_1, atoms)}")
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C32_1, atoms),unmoved_atoms_count(c22_1, atoms),unmoved_atoms_count(C4_1, atoms),unmoved_atoms_count(C21_1, atoms),unmoved_atoms_count(I_1, atoms),unmoved_atoms_count(S4_1, atoms),unmoved_atoms_count(S62_1, atoms),unmoved_atoms_count(sh_1, atoms),unmoved_atoms_count(sd_1, atoms)])
 
     elif pg == "C2v":
@@ -373,7 +354,6 @@ def apply_symm(pg, natoms, atoms):
         C2,C2_1=c2_matrix_z(atoms)
         sv,sv_1=sigmav(atoms)
         Sv,Sv_1=sigmav_xz(atoms)
-        print(f"C2_1: {C2_1} \nAtoms: {atoms} \n{unmoved_atoms_count(C2_1, atoms)}")
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(Sv_1, atoms),unmoved_atoms_count(sv_1, atoms)])
 
     elif pg == "Td":
