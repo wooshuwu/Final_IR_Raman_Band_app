@@ -104,6 +104,7 @@ def geometry_change():
     # # Format the date and time
     # formatted_datetime = now.strftime("%m-%d-%Y %H:%M:%S")
     # print(f"NEW RUN ({formatted_datetime})---------------------------------------------------")
+    st.markdown(f"uwu")
     selected_color_style = st.sidebar.selectbox('Select Color Style', color_styles)
 
     # Create a selectbox for style
