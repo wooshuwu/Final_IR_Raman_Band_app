@@ -186,7 +186,9 @@ def geometry_change():
     st.markdown(gamma_total_table.to_markdown(index = False))
     
     C2_1 = C2,C2_1=c2_matrix_z(atoms)
-    st.markdown(f"C2_1: {C2_1} \nAtoms: {atoms} \n{unmoved_atoms_count(C2_1, atoms)}")
+    st.markdown(f"C2_1: {C2_1}")
+    st.markdown(f"Atoms: {atoms}")
+    st.markdown(f"{unmoved_atoms_count(C2_1, atoms)}")
     
     st.markdown(f"### Breakdown of {gamma_total_label} into irreducible representations")
     irreducible_table = calculate_irreducible_representations(char_table_raw_df, order, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients)
