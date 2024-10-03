@@ -55,8 +55,8 @@ symmetry_ops = {}
 
 # Iterate over the rows of the DataFrame
 for _, row in point_group_symmetry_df.iterrows():
-    label = row[0]  # Get the label from the first column
-    items = row[1].split(',')  # Split the second column by comma to get the items
+    label = row.iloc[0]  # Get the label from the first column
+    items = row.iloc[1].split(',')  # Split the second column by comma to get the items
     symmetry_ops[label] = items
 
 temp = symmetry_ops["Oh"]
@@ -184,6 +184,9 @@ def geometry_change():
     gamma_total_table.iat[1,0] = f"$\#_{{{number_unmoved_label}}}$"
     gamma_total_table.iat[2,0] = f"{gamma_total_label}"
     st.markdown(gamma_total_table.to_markdown(index = False))
+    
+    C2_1 = C2,C2_1=c2_matrix_z(atoms)
+    st.markdown(f"C2_1: {C2_1} \nAtoms: {atoms} \n{unmoved_atoms_count(C2_1, atoms)}")
     
     st.markdown(f"### Breakdown of {gamma_total_label} into irreducible representations")
     irreducible_table = calculate_irreducible_representations(char_table_raw_df, order, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients)
