@@ -157,44 +157,44 @@ def format_superscripts_from_df_column(df, column_name):
 def identity_matrix(atoms):
   E=np.identity(3)
   E_matrix=np.dot(atoms,E)
-  return(E,E_matrix)
+  return(E,E_matrix.astype(float))
 
 
 def c4_matrix(atoms): #This is a 90 degree proper rotation on Z-axis
   C4=np.array([[round(sp.cos(sp.pi/2),4),(round(-sp.sin(sp.pi/2), 4)),0],[round(sp.sin(sp.pi/2), 4),(round(sp.cos(sp.pi/2), 4)),0],[0,0,1]])
   c4_matrix=np.dot(atoms,C4)
-  return(C4,c4_matrix)
+  return(C4,c4_matrix.astype(float))
 
 def c4y_matrix(atoms): #This is a 90 degree proper rotation on y-axis
   C4y=np.array([[round(sp.cos(sp.pi/2),4),0,(round(-sp.sin(sp.pi/2), 4))],[0,1,0],[round(sp.sin(sp.pi/2), 4),0,(round(sp.cos(sp.pi/2), 4))]])
   c4y_matrix=np.dot(atoms,C4y)
-  return(C4y,c4y_matrix)
+  return(C4y,c4y_matrix.astype(float))
 
 def c2_matrix_z(atoms): #This is a 180 degree proper rotation on Z-axis
   C2=np.array([[sp.cos(sp.pi),-sp.sin(sp.pi),0],[sp.sin(sp.pi),sp.cos(sp.pi),0],[0,0,1]])
   c2_matrix=np.dot(atoms,C2)
-  return(C2,c2_matrix)
+  return(C2,c2_matrix.astype(float))
 
 def c2_x(atoms): #This is a 180 degree proper rotation on x-axis
   C21=np.array([[1,0,0],[0,sp.cos(sp.pi),-sp.sin(sp.pi)],[0,sp.sin(sp.pi),sp.cos(sp.pi)]])
   c2_prime_matrix=np.dot(atoms,C21)
-  return(C21,c2_prime_matrix)
+  return(C21,c2_prime_matrix.astype(float))
 
 def c2_y(atoms): #This is a 180 degree proper rotation on y-axis
   C21y=np.array([[sp.cos(sp.pi),0,-sp.sin(sp.pi)],[0,1,0],[sp.sin(sp.pi),0,sp.cos(sp.pi)]])
   c2y_prime_matrix=np.dot(atoms,C21y)
-  return(C21y,c2y_prime_matrix)
+  return(C21y,c2y_prime_matrix.astype(float))
 
 def c2_dprime(atoms): #This is a 180 degree proper rotation in between the axis
   c2_dprime=np.array([[0,-1,0],[-1,0,0],[0,0,-1]])
   c2_dprime_matrix=np.dot(atoms,c2_dprime)
-  return(c2_dprime,c2_dprime_matrix)
+  return(c2_dprime,c2_dprime_matrix.astype(float))
   #c2 on z-axis
 
 def c3_matrix_z(atoms): # This is a C3 (120 degree) rotation on the Z-axis
   C3=np.array([[round(sp.cos(sp.pi/1.5), 8),(round(-sp.sin(sp.pi/1.5), 8)),0],[round(sp.sin(sp.pi/1.5),8),(round(sp.cos(sp.pi/1.5), 8)) ,0],[0,0,1]])
   c3_matrix=np.dot(atoms,C3)
-  return(C3,c3_matrix)
+  return(C3,c3_matrix.astype(float))
 """def c3_matrix_z(): # The result is thesame as the above commented lines of code
   theta = 2 * math.pi / 3
   c3 = np.array([[-math.cos(theta), -math.sin(theta), 0],
@@ -207,97 +207,97 @@ def c3_matrix_z(atoms): # This is a C3 (120 degree) rotation on the Z-axis
 def c_3_matrix_x(atoms): # This is a C3 (120 degree) rotation on x-axis
   C_3=np.array([[1,0,0],[0,round(sp.cos(sp.pi/1.5), 4),(round(-sp.sin(sp.pi/1.5), 4))],[0,round(sp.sin(sp.pi/1.5),4),(round(sp.cos(sp.pi/1.5),4))]])
   c_3_matrix=np.dot(atoms,C_3)
-  return(C_3,c_3_matrix)
+  return(C_3,c_3_matrix.astype(float))
 
 def c_3_matrix_y(atoms): # This is a C3 (120 degree) rotation on y-axis
   C_32=np.array([[round(sp.cos(sp.pi/1.5), 4),0,(round(-sp.sin(sp.pi/1.5), 4))],[0,1,0],[round(sp.sin(sp.pi/1.5),4),0,(round(sp.cos(sp.pi/1.5),4))]])
   c_32_matrix=np.dot(atoms,C_32)
-  return(C_32,c_32_matrix)
+  return(C_32,c_32_matrix.astype(float))
 
 def c3_dprime(atoms): # This is a C3 (120 degree) rotation between the axis
   C32=np.array([[0,1,0],[0,0,1],[1,0,0]])
   c3_dprime=np.dot(atoms,C32)
-  return(C32,c3_dprime)
+  return(C32,c3_dprime.astype(float))
 
 def inversion(atoms):
    E=np.identity(3)
    I_matrix=np.dot(atoms,-E)
-   return(-E,I_matrix)
+   return(-E,I_matrix.astype(float))
 
 def s2(atoms): # This is a 180 degree improper rotation along the Z-axis
   C2=np.array([[sp.cos(sp.pi),-sp.sin(sp.pi),0],[sp.sin(sp.pi),sp.cos(sp.pi),0],[0,0,1]])
   sh=np.array([[1,0,0],[0,1,0],[0,0,-1]])
   s2=np.dot(C2,sh)
   s2_matrix=multi_dot([atoms,C2,sh])
-  return(s2,s2_matrix)
+  return(s2,s2_matrix.astype(float))
 
 def s3(atoms): # This is a 120 degree improper rotation along the Z-axis
   C3=np.array([[round(sp.cos(sp.pi/1.5), 4),(round(-sp.sin(sp.pi/1.5), 4)),0],[round(sp.sin(sp.pi/1.5),4) ,(round(sp.cos(sp.pi/1.5), 4)) ,0],[0,0,1]])
   sh=np.array([[1,0,0],[0,1,0],[0,0,-1]])
   s3=np.dot(C3,sh)
   s3_matrix=multi_dot([atoms,C3,sh])
-  return(s3,s3_matrix)
+  return(s3,s3_matrix.astype(float))
 
 def s_4(atoms):  #This is a 90 degree improper rotation in between the axis
   C_4=np.array([[round(sp.cos(sp.pi/2),4),(round(-sp.sin(sp.pi/2), 4)),0],[round(-sp.sin(sp.pi/2), 4),(round(sp.cos(sp.pi/2), 4)),0],[0,0,-1]])
   sh=np.array([[1,0,0],[0,-1,0],[0,0,1]])
   s_4=np.dot(C_4,sh)
   s_4_matrix=multi_dot([atoms,C_4,sh])
-  return(s_4,s_4_matrix)
+  return(s_4,s_4_matrix.astype(float))
 
 def c_4_matrix(atoms):  # 90 degree proper rotation in between the axis
   C_4=np.array([[round(sp.cos(sp.pi/2),4),(round(-sp.sin(sp.pi/2), 4)),0],[round(-sp.sin(sp.pi/2), 4),(round(sp.cos(sp.pi/2), 4)),0],[0,0,-1]])
   c_4_matrix=np.dot(atoms,C_4)
-  return(C_4,c_4_matrix)
+  return(C_4,c_4_matrix.astype(float))
 
 def s4(atoms): # This is the 90 degree improper rotation on the Z-axis.
   C4=np.array([[round(sp.cos(sp.pi/2),4),(round(-sp.sin(sp.pi/2), 4)),0],[round(sp.sin(sp.pi/2), 4),(round(sp.cos(sp.pi/2), 4)),0],[0,0,1]])
   sh=np.array([[1,0,0],[0,1,0],[0,0,-1]])
   s4=np.dot(C4,sh)
   s4_matrix=multi_dot([atoms,C4,sh])
-  return(s4,s4_matrix)
+  return(s4,s4_matrix.astype(float))
 
 def s6(atoms): # This is the 60 degree improper rotation on the Z-axis.
   C6=np.array([[round(sp.cos(sp.pi/3),4),(round(-sp.sin(sp.pi/3), 4)),0],[round(sp.sin(sp.pi/3), 4),(round(sp.cos(sp.pi/3), 4)),0],[0,0,1]])
   sh=np.array([[1,0,0],[0,1,0],[0,0,-1]])
   s6=np.dot(C6,sh)
   s6_matrix=multi_dot([atoms,C6,sh])
-  return(s6,s6_matrix)
+  return(s6,s6_matrix.astype(float))
 
 def s62(atoms): # This is the 60 degree improper rotation in between the axis.
   s62=np.array([[0,1,0],[0,0,1],[-1,0,0]])
   s62_matrix=np.dot(atoms,s62)
-  return(s62,s62_matrix)
+  return(s62,s62_matrix.astype(float))
 
 def sigmah(atoms): #This is the horizontal reflection
   sh=np.array([[1,0,0],[0,1,0],[0,0,-1]])
   sigmah=np.dot(atoms,sh)
-  return(sh,sigmah)
+  return(sh,sigmah.astype(float))
 
 def sigmav(atoms): # This is the vertical reflection plane along the y-axis and also contains the principal axis
   sv=np.array([[-1,0,0],[0,1,0],[0,0,1]])
   sigmav=np.dot(atoms,sv)
-  return(sv,sigmav)
+  return(sv,sigmav.astype(float))
 
 def sigmav_xz(atoms): # This is the vertical reflection plane along the X- axis and also contains the principal axis
   Sv=np.array([[1,0,0],[0,-1,0],[0,0,1]])
   sigmav_xz=np.dot(atoms,Sv)
-  return(Sv,sigmav_xz)
+  return(Sv,sigmav_xz.astype(float))
 
 def sigmav_xy(atoms):
   Sv=np.array([[1,0,0],[0,1,0],[0,0,-1]])
   sigmav_xy=np.dot(atoms,Sv)
-  return(Sv,sigmav_xy)
+  return(Sv,sigmav_xy.astype(float))
 
 def sigmad(atoms): # This is the diagonal/dihedral reflection plane (A vertical mirror plane that bisects the angle between two C2 axes)
   sd=np.array([[-1,0,0],[0,-1,0],[0,0,1]])
   sigmad=np.dot(atoms,sd)
-  return(sd,sigmad)
+  return(sd,sigmad.astype(float))
 
 def sigmad1(atoms): # This is the diagonal/dihedral reflection plane between the axis (reflection along the diagonal of a 3D space, which goes through the origin which goes through the origin and two axes)
   sd1=np.array([[1, 0, 0], [0, -1, 0], [0, 0, 1]])
   sigmad1=np.dot(atoms,sd1)
-  return(sd1,sigmad1)
+  return(sd1,sigmad1.astype(float))
 
 #Determines how many unmoved atoms are left in each symmetry operation
 def unmoved_atoms_count(symmetry, atoms):
