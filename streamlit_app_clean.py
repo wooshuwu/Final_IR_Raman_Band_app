@@ -186,6 +186,7 @@ def geometry_change():
     st.markdown(gamma_total_table.to_markdown(index = False))
     
     C2_1 = C2,C2_1=c2_matrix_z(atoms)
+    C2_1 = C2_1.astype(float)
     st.markdown(f"C2_1: {C2_1}")
     st.markdown(f"Atoms: {atoms}")
     st.markdown(f"{unmoved_atoms_count(C2_1, atoms)}")
