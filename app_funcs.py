@@ -321,8 +321,6 @@ def unmoved_atoms_count(symmetry, atoms):
         # print(f"i: {current_row} rho: {rho}")
     
     row_index += 1
-  #   print()
-  # print(f"final rho: {rho}")  
   return rho
 
 def apply_symm(pg, natoms, atoms):
@@ -375,7 +373,7 @@ def apply_symm(pg, natoms, atoms):
         C2,C2_1=c2_matrix_z(atoms)
         sv,sv_1=sigmav(atoms)
         Sv,Sv_1=sigmav_xz(atoms)
-        # print(f"C2_1: {C2_1} \nAtoms: {atoms} \n{unmoved_atoms_count(C2_1, atoms)}")
+        print(f"C2_1: {C2_1} \nAtoms: {atoms} \n{unmoved_atoms_count(C2_1, atoms)}")
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(Sv_1, atoms),unmoved_atoms_count(sv_1, atoms)])
 
     elif pg == "Td":
