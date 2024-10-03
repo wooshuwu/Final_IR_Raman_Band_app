@@ -61,32 +61,6 @@ def format_rotational_latex(df, column_name):
   column = df[column_name]
   return pd.Series(formatted_items, index=column.index)
 
-
-# def format_char_table_header(s: str) -> str:
-#   # Replace "inf" with "\infty"
-#     replace_patterns = {"inf": r"\infty",
-#                         "s": r"\sigma",
-#                         "S": r"\sigma"}
-#     if(s not in ("Linear", "Rotational", "Quadratic")):
-#       for pattern_og, pattern_new in replace_patterns.items():
-#         s = s.replace(pattern_og, pattern_new)
-#       # s = s.replace("inf", r"\infty")
-#       # s = 
-      
-#       # Apply subscript formatting
-#       if len(s) > 1:
-#           symbol_first = (s[0] == '\\')
-#           if(not symbol_first):
-#             return f"{s[0]}_{{{s[1:]}}}"
-#           else:
-#             # print(f"{s[0:6]}")
-#             return f"{s[0:6]}_{{{s[7:]}}}"
-#       else:
-#           return s
-#       # return s
-#     else: 
-#       return s
-
 def format_char_table_header(s: str) -> str:
     # Replace "inf" with "\infty"
     if s not in ("Linear", "Rotational", "Quadratic"):
@@ -175,23 +149,11 @@ def format_superscripts_from_df_column(df, column_name):
         if pd.notnull(value):
             processed_value = re.sub(superscript_pattern, r"^{\1}", value)
             processed_values.append(f"${processed_value}$")
-            # processed_values.append(value)
-            # for match in re.finditer(superscript_pattern, value):
-            #     processed_value = f"$^{match}$"
-            #     # processed_value = f"${format_superscripts(value)}$"
-            # processed_values.append(processed_value)
         else:
             processed_values.append(value)
     
     return pd.Series(processed_values, index=column.index)
     
-# file=smis[x] #current file selected
-# name_atoms=file_matrix(file)
-# atoms=np.array(name_atoms[:,1:])
-# atoms=atoms.astype(float)
-# natoms=int(np.shape(atoms)[0])
-
-
 def identity_matrix(atoms):
   E=np.identity(3)
   E_matrix=np.dot(atoms,E)
@@ -456,12 +418,13 @@ def apply_symm(pg, natoms, atoms):
         C2,C2_1=c2_matrix_z(atoms)
         C21,C21_1=c2_x(atoms)
         c22,c22_1=c2_dprime(atoms)
-        I,I_1= inversion(natoms)
+        I,I_1= inversion(atoms)
         S4,S4_1=s4(atoms)
         S62,S62_1=s62(atoms)
         sh,sh_1=sigmah(atoms)
         sv,sv_1=sigmav(atoms)
         sd,sd_1=sigmad(atoms)
+        print(f"I: \n{I_1} \natoms: \n{atoms} \n{unmoved_atoms_count(I_1, atoms)}")
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C32_1, atoms),unmoved_atoms_count(c22_1, atoms),unmoved_atoms_count(C4_1, atoms),unmoved_atoms_count(C21_1, atoms),unmoved_atoms_count(I_1, atoms),unmoved_atoms_count(S4_1, atoms),unmoved_atoms_count(S62_1, atoms),unmoved_atoms_count(sh_1, atoms),unmoved_atoms_count(sd_1, atoms)])
 
         # print("Initial atom coordinates matrix:\n",atoms)
@@ -494,6 +457,7 @@ def apply_symm(pg, natoms, atoms):
         C2,C2_1=c2_matrix_z(atoms)
         sv,sv_1=sigmav(atoms)
         Sv,Sv_1=sigmav_xz(atoms)
+        # print(f"C2_1: {C2_1} \nAtoms: {atoms} \n{unmoved_atoms_count(C2_1, atoms)}")
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(Sv_1, atoms),unmoved_atoms_count(sv_1, atoms)])
 
         # print("Initial atom coordinates matrix:\n",atoms)
