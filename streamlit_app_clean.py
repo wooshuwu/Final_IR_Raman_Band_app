@@ -122,7 +122,7 @@ def geometry_change():
     atom_names = name_atoms[:, 0]
     molecule_name = vsepr_mol_df[vsepr_mol_df["VSEPR"] == f"{geometry}"]["Molecule"].iat[0]
     molecule_name = f"${format_molecules(molecule_name)}$"
-    st.markdown(f"Molecule name: {molecule_name}")
+    st.markdown(f"Example Molecule: {molecule_name}")
         
     atoms = np.array(name_atoms[:,1:])
     atoms = atoms.astype(float)
