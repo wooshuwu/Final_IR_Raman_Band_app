@@ -104,7 +104,8 @@ def geometry_change():
     # # Format the date and time
     # formatted_datetime = now.strftime("%m-%d-%Y %H:%M:%S")
     # print(f"NEW RUN ({formatted_datetime})---------------------------------------------------")
-    st.markdown(f"uwu")
+    
+    st.markdown(pd.__version__)
     selected_color_style = st.sidebar.selectbox('Select Color Style', color_styles)
 
     # Create a selectbox for style
@@ -244,4 +245,3 @@ def geometry_change():
     st.markdown(f"#### Number of Raman bands: {Raman_active_count}")
     
 geometry_change()    
-

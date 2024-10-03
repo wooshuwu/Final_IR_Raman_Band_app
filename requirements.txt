@@ -7,3 +7,4 @@ ipython_genutils
 sympy
 openpyxl
 tabulate
+datetime
