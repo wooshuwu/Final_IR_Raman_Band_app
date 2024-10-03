@@ -299,17 +299,6 @@ def sigmad1(atoms): # This is the diagonal/dihedral reflection plane between the
   sigmad1=np.dot(atoms,sd1)
   return(sd1,sigmad1)
 
-# E=identity_matrix(natoms)
-# C4=c4_matrix()
-# c22=c2_dprime()
-# I=inversion(natoms)
-# S4=s4()
-# S6=s6()
-# S62=s62()
-# SH=sigmah()
-# SV=sigmav()
-# SD=sigmad()
-
 #Determines how many unmoved atoms are left in each symmetry operation
 def unmoved_atoms_count(symmetry, atoms):
   """
@@ -324,8 +313,6 @@ def unmoved_atoms_count(symmetry, atoms):
   """
   rho=0
   row_index=0
-  # print(f"Symmetry: \n{symmetry} \n Atoms: \n{atoms}")
-  # print(f"Symmetry: \n{symmetry}")
   for current_row in symmetry:
     match_bool = np.array_equal(current_row, atoms[row_index])
     # print(f"EQUAL: {match_bool} Rho: {rho} current row: {current_row}, atoms[row_index]: {atoms[row_index]}")
@@ -338,11 +325,6 @@ def unmoved_atoms_count(symmetry, atoms):
   # print(f"final rho: {rho}")  
   return rho
 
-#@title *Apply the symmetry operations on your chosen molecule and find out the number of unmoved positions*
-#code to assign symmetry operations to each point group and then return the resulting matrix.
-#def symmetry_designation:
-# atoms2=atoms
-
 def apply_symm(pg, natoms, atoms):
     """
     Apply the symmetry operations on your chosen molecule and find out the number of unmoved positions*
@@ -353,10 +335,6 @@ def apply_symm(pg, natoms, atoms):
         pg (str): point group
     """
     if pg == "Dinf_h":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E,C∞,C2\',i,S∞,σ∞")
-        # print(f"natoms: {natoms}")
         E,E_1x=identity_matrix(atoms)
         C2,C2_1=c2_matrix_z(atoms)
         C21,C21_1=c2_x(atoms)
@@ -367,25 +345,7 @@ def apply_symm(pg, natoms, atoms):
         Sv2,Sv2_1=sigmav_xy(atoms)
         group_mat = np.array([unmoved_atoms_count(E_1x, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(C21_1, atoms),unmoved_atoms_count(c22_1, atoms),unmoved_atoms_count(I_1, atoms),unmoved_atoms_count(Sv2_1, atoms),unmoved_atoms_count(Sv1_1, atoms),unmoved_atoms_count(Sv_1, atoms)])
 
-
-        # print("Initial atom coordinates matrix (atoms):\n",atoms)
-        # print(f"Identity matrix: (E) \n {E} \n {unmoved_atoms_count(E_1x, atoms)}")
-        # print("Resulting matrix after E (E_1x):\n",E_1x)
-        # print("C∞ matrix (C2): \n",C2)
-        # print("Resulting matrix after C∞ (C2_1):\n",C2_1)
-        # print("Inversion matrix (I):\n",I)
-        # print("Resulting matrix after I (I_1): \n", I_1)
-        # print("σ∞ matrix (Sv): \n",Sv)
-        # print("Resulting matrix after σ∞ matrix (Sv_1): \n",Sv_1 )
-        # print("σ∞ matrix (Sv1): \n",Sv1)
-        # print("Resulting matrix after σ∞ matrix (Sv1_1): \n",Sv1_1 )
-        # print("σ∞ matrix (Sv2): \n",Sv2)
-        # print("Resulting matrix after σ∞ matrix (Sv2_1): \n",Sv2_1 )
-
     elif pg == "D3h":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E, C3, C2, σh, S3, σv")
         E,E_1=identity_matrix(atoms)
         C3,C3_1=c3_matrix_z(atoms)
         C21,C21_1=c2_y(atoms)
@@ -394,24 +354,7 @@ def apply_symm(pg, natoms, atoms):
         Sv,Sv_1=sigmav(atoms)
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C3_1, atoms),unmoved_atoms_count(C21_1, atoms),unmoved_atoms_count(sh_1, atoms),unmoved_atoms_count(S3_1, atoms),unmoved_atoms_count(Sv_1, atoms)])
 
-        # print("Initial atom coordinates matrix:\n",atoms)
-        # print("Identity matrix:\n",E)
-        # print("Resulting matrix after E: \n",E_1 )
-        # print("C3 matrix: \n",C3)
-        # print("Resulting matrix after C3: \n",C3_1)
-        # print("C2 matrix: \n",C21)
-        # print("Resulting matrix after C2: \n",C21_1)
-        # print("σh matrix: \n",sh)
-        # print("Resulting matrix after σh matrix: \n",sh_1 )
-        # print("S3 matrix: \n",S3)
-        # print("Resulting matrix after S3:\n",S3_1)
-        # print("σv matrix: \n",Sv)
-        # print("Resulting matrix after σv_xz matrix: \n",Sv_1 )
-
     elif pg =="Oh":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E, C3'',C2'', C4, C2', i, S4, S6, σh, σd")
         E,E_1=identity_matrix(atoms)
         C4,C4_1=c4_matrix(atoms)
         C32,C32_1=c3_dprime(atoms)
@@ -427,32 +370,7 @@ def apply_symm(pg, natoms, atoms):
         print(f"I: \n{I_1} \natoms: \n{atoms} \n{unmoved_atoms_count(I_1, atoms)}")
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C32_1, atoms),unmoved_atoms_count(c22_1, atoms),unmoved_atoms_count(C4_1, atoms),unmoved_atoms_count(C21_1, atoms),unmoved_atoms_count(I_1, atoms),unmoved_atoms_count(S4_1, atoms),unmoved_atoms_count(S62_1, atoms),unmoved_atoms_count(sh_1, atoms),unmoved_atoms_count(sd_1, atoms)])
 
-        # print("Initial atom coordinates matrix:\n",atoms)
-        # print("Identity matrix:\n",E)
-        # print("Resulting matrix after E: \n",E_1 )
-        # print("C3'' matrix: \n",C32)
-        # print("Resulting matrix after C3'': \n",C32_1)
-        # print("C2'' matrix: \n",c22)
-        # print("Resulting matrix after C2: \n",c22_1)
-        # print("C4 matrix: \n",C4)
-        # print("Resulting matrix after C4: \n",C4_1)
-        # print("C2' matrix: \n",C21)
-        # print("Resulting matrix after C2: \n",C21_1)
-        # print("Inversion matrix:\n",I)
-        # print("Resulting matrix after I: \n",I_1 )
-        # print("S4 matrix: \n",S4)
-        # print("Resulting matrix after S4:\n",S4_1)
-        # print("S6'' matrix: \n",S62)
-        # print("Resulting matrix after S6'':\n",S62_1)
-        # print("σh matrix: \n",sh)
-        # print("Resulting matrix after σh matrix: \n",sh_1 )
-        # print("σd matrix: \n",sd)
-        # print("Resulting matrix after σd matrix: \n",sd_1 )
-
     elif pg == "C2v":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E, C2, σv(xz),σv(yz)")
         E,E_1=identity_matrix(atoms)
         C2,C2_1=c2_matrix_z(atoms)
         sv,sv_1=sigmav(atoms)
@@ -460,20 +378,7 @@ def apply_symm(pg, natoms, atoms):
         # print(f"C2_1: {C2_1} \nAtoms: {atoms} \n{unmoved_atoms_count(C2_1, atoms)}")
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(Sv_1, atoms),unmoved_atoms_count(sv_1, atoms)])
 
-        # print("Initial atom coordinates matrix:\n",atoms)
-        # print("Identity matrix:\n",E)
-        # print("Resulting matrix after E:\n",E_1)
-        # print("C2 matrix: \n",C2)
-        # print("Resulting matrix after C2: \n",C2_1)
-        # print("σv matrix: \n",sv)
-        # print("Resulting matrix after σv matrix: \n",sv_1 )
-        # print("σv_xz matrix: \n",Sv)
-        # print("Resulting matrix after σv_xz matrix: \n",Sv_1 )
-
     elif pg == "Td":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E, C3, C2, S4, σd")
         E,E_1=identity_matrix(atoms)
         C3,C3_1=c3_matrix_z(atoms)
         C2,C2_1=c2_x(atoms)
@@ -481,39 +386,13 @@ def apply_symm(pg, natoms, atoms):
         sd1,sd1_1=sigmad1(atoms)
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C3_1, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(S4_1, atoms),unmoved_atoms_count(sd1_1, atoms)])
 
-        # print("Initial atom coordinates matrix:\n",atoms)
-        # print("Identity matrix:\n",E)
-        # print("Resulting matrix after E:\n",E_1)
-        # print("C3 matrix: \n",C3)
-        # print("Resulting matrix after C3:\n",C3_1)
-        # print("C2 matrix: \n",C2)
-        # print("Resulting matrix after C2:\n",C2_1)
-        # print("S4 matrix: \n",S4)
-        # print("Resulting matrix after S4:\n",S4_1)
-        # print("σd matrix: \n",sd1)
-        # print("Resulting matrix after σd matrix: \n",sd1_1 )
-
     elif pg == "C3v":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E, C3, σv")
         E,E_1=identity_matrix(atoms)
         C3,C3_1=c3_matrix_z(atoms)
         Sv,Sv_1=sigmav_xz(atoms)
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C3_1, atoms),unmoved_atoms_count(Sv_1, atoms)])
 
-        # print("Initial atom coordinates matrix:\n",atoms)
-        # print("Identity matrix:\n",E)
-        # print("Resulting matrix after E:\n",E_1)
-        # print("C3 matrix: \n",C3)
-        # print("Resulting matrix after C3:\n",C3_1)
-        # print("σv_xz matrix: \n",Sv)
-        # print("Resulting matrix after σv matrix: \n",Sv_1 )
-
     elif pg == "C4v":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E, C4, C2, σv, σd")
         E,E_1=identity_matrix(atoms)
         C4,C4_1=c4_matrix(atoms)
         C2,C2_1=c2_matrix_z(atoms)
@@ -521,22 +400,7 @@ def apply_symm(pg, natoms, atoms):
         sd,sd_1=sigmad(atoms)
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C4_1, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(sv_1, atoms),unmoved_atoms_count(sd_1, atoms)])
 
-        # print("Initial atom coordinates matrix:\n",atoms)
-        # print("Identity matrix:\n",E)
-        # print("Resulting matrix after E:\n",E_1)
-        # print("C4 matrix: \n",C4)
-        # print("Resulting matrix after C4: \n",C4_1)
-        # print("C2 matrix: \n",C2)
-        # print("Resulting matrix after C2:\n",C2_1)
-        # print("σv matrix: \n",sv)
-        # print("Resulting matrix after σv matrix: \n",sv_1 )
-        # print("σd matrix: \n",sd)
-        # print("Resulting matrix after σd matrix: \n",sd_1 )
-
     elif pg == "D4h":
-        # print("Your point group is:",pg)
-        # print("Symmetry operations used in your point group are:")
-        # print("E, C4, C2, C2', C2'', i, S4, σh, σd, σv")
         E,E_1=identity_matrix(atoms)
         C4,C4_1=c4_matrix(atoms)
         C2,C2_1=c2_matrix_z(atoms)
@@ -548,28 +412,7 @@ def apply_symm(pg, natoms, atoms):
         sv,sv_1=sigmav(atoms)
         sd,sd_1=sigmad(atoms)
         group_mat = np.array([unmoved_atoms_count(E_1, atoms),unmoved_atoms_count(C4_1, atoms),unmoved_atoms_count(C2_1, atoms),unmoved_atoms_count(C21_1, atoms),unmoved_atoms_count(c22_1, atoms),unmoved_atoms_count(I_1, atoms),unmoved_atoms_count(S4_1, atoms),unmoved_atoms_count(sh_1, atoms),unmoved_atoms_count(sv_1, atoms),unmoved_atoms_count(sd_1, atoms)])
-
-        # print("Initial atom coordinates matrix:\n",atoms)
-        # print("Identity matrix:\n",E)
-        # print("Resulting matrix after E: \n",E_1 )
-        # print("C4 matrix: \n",C4)
-        # print("Resulting matrix after C4: \n",C4_1)
-        # print("C2 matrix: \n",C2)
-        # print("Resulting matrix after C2: \n",C2_1)
-        # print("C2' matrix: \n",C21)
-        # print("Resulting matrix after C2: \n",C21_1)
-        # print("C2'' matrix: \n",c22)
-        # print("Resulting matrix after C2: \n",c22_1)
-        # print("Inversion matrix:\n",I)
-        # print("Resulting matrix after I: \n",I_1 )
-        # print("S4 matrix: \n",S4)
-        # print("Resulting matrix after S4:\n",S4_1)
-        # print("σv matrix: \n",sv)
-        # print("Resulting matrix after σv matrix: \n",sv_1 )
-        # print("σh matrix: \n",sh)
-        # print("Resulting matrix after σh matrix: \n",sh_1 )
-        # print("σd matrix: \n",sd)
-        # print("Resulting matrix after σd matrix: \n",sd_1 )
+        
     else:
         print("ERROR")
         group_mat = np.array([-1])
@@ -578,15 +421,7 @@ def apply_symm(pg, natoms, atoms):
 
 def get_data_from_point_group(pg_, df_):
     """returns the relevant data (symmetry coefficients, order, dataframe) from the point group argument"""
-    # df=pd.read_excel(r"C:\Users\artsy\OneDrive - UNT System\Research\code2\pythonExperiments\Baba_apps\charactertables_v2.xlsx", pg_)
     searchfor=['x','y','z']
-    # df_clean=df[~df['Linear'].isnull()]
-    # num_rows=len(df_clean.index)
-
-    # df.iloc[-1:,1:] selects the last row and all columns starting from the second column of df.
-    # .dropna(axis='columns') drops any columns that contain null values.
-    # .to_numpy() converts the resulting DataFrame to a NumPy array and assigns it to the variable D.
-    # symmetry_op_coeff = df_.iloc[-2:,1:].dropna(axis='columns').to_numpy()
     symmetry_op_coeff = df_.iloc[-2,1:].dropna().to_numpy()
     symmetry_op_coeff = symmetry_op_coeff.flatten() #convert to 1d array
     
@@ -594,11 +429,7 @@ def get_data_from_point_group(pg_, df_):
     atomic_contribution_symm = df_.iloc[-1,1:].dropna().to_numpy()
     atomic_contribution_symm = atomic_contribution_symm.flatten() #convert to 1d array
     
-    
-    
-    # order_grad =np.sum(symmetry_op_coeff_grad) # This gives the order of the grad group
     order =np.sum(symmetry_op_coeff) # This gives the order of the undergrad group
-    # return symmetry_op_coeff, order, df_clean
     return symmetry_op_coeff, order, atomic_contribution_symm 
 
 def calculate_irreducible_representations(df_, order_, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients):
@@ -608,27 +439,14 @@ def calculate_irreducible_representations(df_, order_, unmoved_atoms, atomic_con
     N1=0
     row_list_all=df_.loc[i].to_list()
     row_list=row_list_all[1:-3]
-    # row_list4=row_list_all[1:-4]
-    # print(f"row_list_all: {row_list_all} \nrow_list -3: {row_list}\n row list - 4: {row_list4}")
-    # floats = [float(i) for i in row_list]
-    # print(f"floats: {floats}, row_list: {row_list}")
     for j in range(len(row_list)):
-    #   N=(unmoved_atoms[j]*symmetry_coefficients[0,j]*row_list[j])
         N=(unmoved_atoms[j]*symmetry_coefficients[j]*row_list[j]*atomic_contribution_symm[j])
-        # Nv2 = unmoved_atoms[j]*symmetry_coefficients[j]
-        # print(f"N: {N}, Nv2: {Nv2}")
-        # W = (N*atomic_contribution_symm[j])
-    #   N1 =N1+ N
         N1 += N
-        # print(f"W: {W}")
     N2=N1/order_
-    # print(f"N: {N}")
     M.append(N2)
   M.append(0)
   df_['M']=M #the coefficient of the particular irreducible representation present
   irreducible_rep = df_[df_.M > 0]
-  # prev = df_
-  # return irreducible_rep, prev
   return irreducible_rep
 
 def gamma_formula_notation(df_):
