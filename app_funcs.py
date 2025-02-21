@@ -410,18 +410,27 @@ def get_data_from_point_group(pg_, df_):
     order =np.sum(symmetry_op_coeff) # This gives the order of the undergrad group
     return symmetry_op_coeff, order, atomic_contribution_symm 
 
-def calculate_irreducible_representations(df_, order_, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients):
+def calculate_irreducible_representations(df_, order_, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients, grad_or_ug):
   M=[]
   rows=len(df_.index)-1
   for i in range(rows):
     N1=0
     row_list_all=df_.loc[i].to_list()
     row_list=row_list_all[1:-3]
+    # print(f"row_list: {len(row_list)}")
+    # print(f"row_list: {row_list}")
     for j in range(len(row_list)):
-        N=(unmoved_atoms[j]*symmetry_coefficients[j]*row_list[j]*atomic_contribution_symm[j])
+        if(grad_or_ug == "grad"):
+          N=(unmoved_atoms[j]*symmetry_coefficients[j]*row_list[j]*atomic_contribution_symm[j])
+        elif(grad_or_ug == "undergrad"):
+          # print(f"{unmoved_atoms[j]} * {symmetry_coefficients[j]} * {row_list[j]}")
+          N=(unmoved_atoms[j]*symmetry_coefficients[j]*row_list[j])
+        # print(f"{N}")
         N1 += N
+    # print(f"N1: {N1}")
     N2=N1/order_
     M.append(N2)
+    # print("\n")
   M.append(0)
   df_['M']=M #the coefficient of the particular irreducible representation present
   irreducible_rep = df_[df_.M > 0]

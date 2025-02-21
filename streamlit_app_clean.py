@@ -75,6 +75,11 @@ color_styles = ['spectrum', 'element', 'chain', 'custom']
 # List of available styles
 styles = ['stick', 'line', 'sphere', 'cartoon']
 
+version_dictionary = {
+    "Selected Stretching Vibration": "UG", 
+    "Full Vibration": "G"
+}
+
 # Dictionary mapping color styles to color options
 color_options = {
     'spectrum': 'spectrum',
@@ -109,6 +114,12 @@ def geometry_change():
     # Create a selectbox for style
     selected_style = st.sidebar.selectbox('Select Style', styles)
     
+    versions = ["Selected Stretching Vibration", "Full Vibration"]
+    selected_version = st.sidebar.selectbox("Select Version", versions)
+    
+    current_version = version_dictionary[selected_version]
+    st.markdown(f"Selected version: {current_version}")
+    
     idx2 = [group["Geometry"] for group in groups].index(selected_geometry)
     
     point_group = groups[idx2]['Point Group']
@@ -127,17 +138,37 @@ def geometry_change():
     atoms = np.array(name_atoms[:,1:])
     atoms = atoms.astype(float)
     natoms = int(np.shape(atoms)[0])
-    st.markdown(f"Number of atoms: {natoms}")
+    
+    atoms_ug = np.delete(atoms, (0), axis=0)
+    natoms_ug = int(np.shape(atoms_ug)[0])
+    
+    print(f"number of atoms: {natoms_ug} \natoms size og {np.size(atoms)} atoms size ug {np.size(atoms_ug)}")
+    if(current_version == "UG"):
+        st.markdown(f"Unmoved arrows: {natoms_ug}")
+    elif(current_version == "G"):
+        st.markdown(f"Number of atoms: {natoms}")
+    ## REMOVE LATER
+    # st.markdown(f"Atoms: {atoms}")
+    # st.markdown(f"Atoms UG: {atoms_ug}")
+    
     
     unmoved_atoms = apply_symm(point_group, natoms, atoms)
+    ## REMOVE LATER
+    # st.markdown(f"Unmoved atoms: {unmoved_atoms}")
+    unmoved_atoms_ug = apply_symm(point_group, natoms_ug, atoms_ug)
+    ## REMOVE LATER
+    # st.markdown(f"Unmoved atoms UG: {unmoved_atoms_ug}")
     char_table_raw_df = pd.read_excel(character_table_path, point_group)
 
     symmetry_coefficients, order, atomic_contribution_symm = get_data_from_point_group(point_group, char_table_raw_df)
     st.markdown(f"order: {order}")
     
     unmoved_atoms_df = pd.DataFrame([unmoved_atoms], columns = char_table_raw_df.columns[1:-3])
+    unmoved_atoms_df_ug = pd.DataFrame([unmoved_atoms_ug], columns = char_table_raw_df.columns[1:-3])
     unmoved_atoms_latex = [f"${format_char_table_header(col)}$" for col in unmoved_atoms_df]
+    unmoved_atoms_latex_ug = [f"${format_char_table_header(col)}$" for col in unmoved_atoms_df_ug]
     unmoved_atoms_df.columns = unmoved_atoms_latex
+    unmoved_atoms_df_ug.columns = unmoved_atoms_latex_ug
     
     view = py3Dmol.view(data=file_list[idx2])
     # Apply the selected color style and style
@@ -167,30 +198,69 @@ def geometry_change():
     
     # st.markdown(f"### Atomic contributions of symmetry")
     gamma_total_table = char_table_raw_df.iloc[-1:, :-3]
+    gamma_total_table_ug = char_table_raw_df.iloc[[-2], :-3]
+    # st.markdown(f"{np.size(char_table_raw_df.iloc[[-2], :-3])}")
 
     gamma_total_table = gamma_total_table.reset_index(drop = True)
+    gamma_total_table_ug = gamma_total_table_ug.reset_index(drop = True)
     unmoved_atoms_df = unmoved_atoms_df.reset_index(drop = True)
+    unmoved_atoms_df_ug = unmoved_atoms_df_ug.reset_index(drop = True)
     gamma_total_table = pd.concat([gamma_total_table, unmoved_atoms_df])
+    # st.markdown(f"Gamma total table temp: {gamma_total_table_ug}")
+
+    gamma_total_table_ug = pd.concat([gamma_total_table_ug, unmoved_atoms_df_ug])
 
     gamma_xyz_label = r"$\Gamma_{xyz}$"
     number_unmoved_label = "unmoved"
     gamma_xyz = pd.DataFrame([gamma_total_table.iloc[0, 1:] * gamma_total_table.iloc[1, 1:]])
+    gamma_xyz_ug = pd.DataFrame([gamma_total_table_ug.iloc[0, 1:] * gamma_total_table_ug.iloc[1, 1:]])
     gamma_total_table = pd.concat([gamma_total_table, gamma_xyz])
+    gamma_total_table_ug = pd.concat([gamma_total_table_ug, gamma_xyz_ug])
     
     gamma_total_table.iat[0,0] = f"{gamma_xyz_label}"
     gamma_total_table.iat[1,0] = f"$\#_{{{number_unmoved_label}}}$"
     gamma_total_table.iat[2,0] = f"{gamma_total_label}"
-    st.markdown(gamma_total_table.to_markdown(index = False))
     
-    st.markdown(f"### Breakdown of {gamma_total_label} into irreducible representations")
-    irreducible_table = calculate_irreducible_representations(char_table_raw_df, order, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients)
+    
+    number_unmoved_label_ug = "unmovedArrows"
+    gamma_total_table_ug.iat[0,0] = f"coefficients" #coefficients of each symmetry operation
+    gamma_total_table_ug.iat[1,0] = f"$\#_{{{number_unmoved_label_ug}}}$"
+    gamma_total_table_ug.iat[2,0] = f"{gamma_total_label}"
+    
+    # gamma_total_label_ug = r"$\Gamma_{total UG}$"
+    if(current_version == "G"):
+        st.markdown(gamma_total_table.to_markdown(index = False))
+    elif(current_version == "UG"):    
+        st.markdown(gamma_total_table_ug.to_markdown(index = False))
+    # st.markdown(f"### {gamma_total_label_ug}")
+    
+    
+    
+    # print(f"og df: {char_table_raw_df}")
+    irreducible_table = calculate_irreducible_representations(copy.copy(char_table_raw_df), order, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients, "grad")
+    # irreducible_table_v2 = calculate_irreducible_representations(char_table_raw_df, order, unmoved_atoms, atomic_contribution_symm, symmetry_coefficients, "grad")
     
     irreducible_table = irreducible_table[:-1]
     irreducible_table_no_na = irreducible_table.fillna("")
-    st.markdown(irreducible_table_no_na.to_markdown(index = False))
-    
     irreducible_formula = f"{gamma_total_label} = {gamma_formula_notation(irreducible_table)}"
-    st.markdown(f"{irreducible_formula}")
+    if(current_version == "G"):
+        st.markdown(f"### Breakdown of {gamma_total_label} into irreducible representations")
+        st.markdown(irreducible_table_no_na.to_markdown(index = False))
+        st.markdown(f"{irreducible_formula}")
+    
+    gamma_vib_label_ug = r"$\Gamma_{vibration}$"
+    
+    # print(f"uwu ug: {char_table_raw_df}")
+    irreducible_table_ug = calculate_irreducible_representations(copy.copy(char_table_raw_df), order, unmoved_atoms_ug, atomic_contribution_symm, symmetry_coefficients, "undergrad")
+    
+    irreducible_table_ug = irreducible_table_ug[:-1]
+    irreducible_table_no_na_ug = irreducible_table_ug.fillna("")
+    irreducible_formula_ug = f"{gamma_total_label} = {gamma_formula_notation(irreducible_table_ug)}"
+    
+    if(current_version == "UG"):
+        st.markdown(f"### Breakdown of {gamma_vib_label_ug} into irreducible representations")
+        st.markdown(irreducible_table_no_na_ug.to_markdown(index = False))
+        st.markdown(f"{irreducible_formula_ug}")
     
     reduced_rotation = irreducible_table[~irreducible_table['$Rotational$'].isnull()]
     #subtract the representation that corresponds to the rotational motion
@@ -217,9 +287,11 @@ def geometry_change():
 
     gamma_linear_label = r"$\Gamma_{Trans(x,y,z)}$"
     gamma_vibrational_label = r"$\Gamma_{vib}$"
-    st.markdown(f"#### {gamma_vibrational_label} = {gamma_total_label} - {gamma_linear_label} - {gamma_rotational_label}")
-    st.markdown(reduced_irreducible_lin.fillna("").to_markdown(index = False))
-    st.markdown(f"{gamma_vibrational_label} = {gamma_formula_notation(reduced_irreducible_lin)}")
+    
+    if(current_version == "G"):
+        st.markdown(f"#### {gamma_vibrational_label} = {gamma_total_label} - {gamma_linear_label} - {gamma_rotational_label}")
+        st.markdown(reduced_irreducible_lin.fillna("").to_markdown(index = False))
+        st.markdown(f"{gamma_vibrational_label} = {gamma_formula_notation(reduced_irreducible_lin)}")
     
     IR_active = vibration_rep[~vibration_rep["$Linear$"].isnull()]
     IR_active_reduced = IR_active.iloc[:, [0, -1]]
@@ -227,8 +299,19 @@ def geometry_change():
     IR_active_count = IR_active.iloc[:, -1].astype(int).sum()
     
     st.markdown(f"## IR Active Bands ")
-    st.markdown(IR_active_reduced.fillna("").to_markdown(index = False))
-    st.markdown(f"#### Number of IR bands: {IR_active_count}")
+    if(current_version == "G"):
+        st.markdown(IR_active_reduced.fillna("").to_markdown(index = False))
+        st.markdown(f"#### Number of IR bands: {IR_active_count}")
+    
+    IR_active_ug = irreducible_table_ug[~irreducible_table_ug["$Linear$"].isnull()]
+    IR_active_reduced_ug = IR_active_ug.iloc[:, [0, -1]]
+    IR_active_reduced_ug = IR_active_reduced_ug[IR_active_reduced_ug.M > 0]
+    IR_active_count_ug = IR_active_ug.iloc[:, -1].astype(int).sum()
+    # st.markdown(f"## IR Active Bands")
+    
+    if(current_version == "UG"):
+        st.markdown(IR_active_reduced_ug.fillna("").to_markdown(index = False))
+        st.markdown(f"#### Number of IR bands: {IR_active_count_ug}")
     
     Raman_active = vibration_rep.dropna(subset = ["$Quadratic$", "$Rotational$"], how = "all")
     # Raman_active = vibration_rep["$Quadratic$"].isna() | vibration_rep["$Rotational$"].isna()
@@ -238,7 +321,20 @@ def geometry_change():
     Raman_active_count = Raman_active.iloc[:, -1].astype(int).sum()
     
     st.markdown(f"## Raman Active Bands")
-    st.markdown(Raman_active_reduced.fillna("").to_markdown(index = False))
-    st.markdown(f"#### Number of Raman bands: {Raman_active_count}")
+    if(current_version == "G"):
+        st.markdown(Raman_active_reduced.fillna("").to_markdown(index = False))
+        st.markdown(f"#### Number of Raman bands: {Raman_active_count}")
+    
+    Raman_active_ug = irreducible_table_ug[~irreducible_table_ug["$Quadratic$"].isnull()]
+    # Raman_active = vibration_rep["$Quadratic$"].isna() | vibration_rep["$Rotational$"].isna()
+    Raman_active_reduced_ug = Raman_active_ug.iloc[:, [0, -1]]
+    Raman_active_reduced_ug = Raman_active_reduced_ug[Raman_active_reduced_ug.M > 0]
+     
+    Raman_active_count_ug = Raman_active_ug.iloc[:, -1].astype(int).sum()
+    
+    # st.markdown(f"## Raman Active Bands (UG)")
+    if(current_version == "UG"):
+        st.markdown(Raman_active_reduced_ug.fillna("").to_markdown(index = False))
+        st.markdown(f"#### Number of Raman bands: {Raman_active_count_ug}")
     
 geometry_change()    
