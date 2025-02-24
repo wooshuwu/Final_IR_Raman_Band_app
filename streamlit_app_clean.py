@@ -10,7 +10,44 @@ import copy
 from app_funcs import * 
 
 website_name = "unt-predicting-ir-raman-bands"
-st.set_page_config(page_title=website_name)
+st.set_page_config(page_title=website_name, layout="wide", initial_sidebar_state="collapsed")
+
+# Custom CSS for responsiveness
+# st.markdown("""
+# <style>
+#     .reportview-container .main .block-container {
+#         max-width: 95%;
+#         padding-top: 5rem;
+#         padding-right: 1rem;
+#         padding-left: 1rem;
+#         padding-bottom: 5rem;
+#     }
+#     .stTable {
+#         width: 100%;
+#         overflow-x: auto;
+#     }
+# </style>
+# """, unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+    @media (max-width: 600px) {
+        .stApp {
+            transform: scale(0.6);
+            transform-origin: top left;
+            width: 166.66%;
+            height: 166.66%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+# Sidebar
+# st.sidebar.title("Controls")
 
 # @title Open .xyz file with cartesian coordinates
 fold_name = "Molecules"
@@ -68,8 +105,7 @@ st.title('Predicting IR and Raman Bands')
 geometry_options = [group["Geometry"] for group in groups]
 selected_geometry = geometry_options[0]
 
-selected_geometry =  st.sidebar.selectbox("Select Geometry", geometry_options)
-
+#Sidebar content
 color_styles = ['spectrum', 'element', 'chain', 'custom']
 
 # List of available styles
@@ -80,6 +116,8 @@ version_dictionary = {
     "Full Vibration": "G"
 }
 
+versions = ["Selected Stretching Vibration", "Full Vibration"]
+
 # Dictionary mapping color styles to color options
 color_options = {
     'spectrum': 'spectrum',
@@ -87,6 +125,11 @@ color_options = {
     'chain': 'chain',
     'custom': 'red'  # You can change this to any custom color
 }
+
+selected_version = st.sidebar.selectbox("Select Version", versions)
+selected_geometry =  st.sidebar.selectbox("Select Geometry", geometry_options)
+selected_color_style = st.sidebar.selectbox('Select Color Style', color_styles)
+selected_style = st.sidebar.selectbox('Select Style', styles)
 
 # st.markdown("""
 #     <style>
@@ -99,26 +142,29 @@ color_options = {
 #     </style>
 # """, unsafe_allow_html=True)
 
-    
+# st.markdown("""
+#     <style>
+#     .sidebar .sidebar-content {
+#         width: 300px;
+#     }
+#     @media (max-width: 500px) {
+#         .sidebar .sidebar-content {
+#             width: 100%;
+#         }
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
+  
 def geometry_change():
-    # Create a selectbox for color style
     # Get the current date and time
-    # now = datetime.datetime.now()
+    # now = datetime.datetime.now() 
 
     # # Format the date and time
     # formatted_datetime = now.strftime("%m-%d-%Y %H:%M:%S")
     # print(f"NEW RUN ({formatted_datetime})---------------------------------------------------")
     
-    selected_color_style = st.sidebar.selectbox('Select Color Style', color_styles)
-
-    # Create a selectbox for style
-    selected_style = st.sidebar.selectbox('Select Style', styles)
-    
-    versions = ["Selected Stretching Vibration", "Full Vibration"]
-    selected_version = st.sidebar.selectbox("Select Version", versions)
-    
     current_version = version_dictionary[selected_version]
-    st.markdown(f"Selected version: {current_version}")
+    # st.markdown(f"Selected version: {current_version}")
     
     idx2 = [group["Geometry"] for group in groups].index(selected_geometry)
     
@@ -142,7 +188,7 @@ def geometry_change():
     atoms_ug = np.delete(atoms, (0), axis=0)
     natoms_ug = int(np.shape(atoms_ug)[0])
     
-    print(f"number of atoms: {natoms_ug} \natoms size og {np.size(atoms)} atoms size ug {np.size(atoms_ug)}")
+    # print(f"number of atoms: {natoms_ug} \natoms size og {np.size(atoms)} atoms size ug {np.size(atoms_ug)}")
     if(current_version == "UG"):
         st.markdown(f"Unmoved arrows: {natoms_ug}")
     elif(current_version == "G"):
@@ -174,7 +220,36 @@ def geometry_change():
     # Apply the selected color style and style
     view.setStyle({selected_style: {'color': color_options[selected_color_style]}})
     view.zoomTo()
-    showmol(view, height=500, width=800)
+    # axes_var = {"origin": {"x": 0, "y": 0, "z": 0},
+    #             "axes": [{
+    #             "start": {"x": -10, "y": 0, "z": 0},
+    #             "end": {"x": 10, "y": 0, "z": 0},
+    #             "radius": 0.1,
+    #             "color": "red"
+    # }]
+    #                 }
+    # view.addAxes(axes_var)
+    # viewer_html = view.getHTML()
+    showmol(view, height=500, width = 600) 
+    
+    # TO-DO: understand this code to actually properly scale putting them in a container
+    # viewer_container = st.container()
+    # st.markdown("""
+    # <style>
+    #     .viewer-container {
+    #         width: 100%;
+    #         padding-bottom: 75%; /* Adjust this value to change the aspect ratio */
+    #         position: relative;
+    #     }
+    # </style>
+    # """, unsafe_allow_html=True)
+
+    # with viewer_container:
+    #     st.markdown('<div class="viewer-container">', unsafe_allow_html=True)
+    #     viewer = py3Dmol.view(query='pdb:1A2C')
+    #     viewer.setStyle({'cartoon':{'color':'spectrum'}})
+    #     showmol(viewer, height=500, width=600)
+    #     st.markdown('</div>', unsafe_allow_html=True)
     
     latex_title = [f"${format_char_table_header(col)}$" for col in char_table_raw_df]
     
@@ -188,10 +263,57 @@ def geometry_change():
     char_table_latex_df["$Rotational$"] = format_rotational_latex(char_table_latex_df, "$Rotational$")
     char_table_latex_df_no_na = char_table_raw_df[:-2].fillna("")
     
-    table_markdown = char_table_latex_df_no_na.to_markdown(index = False)
+    char_table_markdown = char_table_latex_df_no_na.to_markdown(index = False)
     st.markdown(f"## Character table")
 
-    st.markdown(table_markdown)
+    # scaled_table = f"""
+    # <div style="font-size: 0.8em;">
+
+    # {table_markdown}
+
+    # </div>
+    # """
+    # st.markdown("""
+    # <style>
+    #     .responsive-table {
+    #         width: 100%;
+    #         overflow-x: auto;
+    #     }
+    #     .responsive-table table {
+    #         width: 100%;
+    #         min-width: 400px;
+    #     }
+    # </style>
+    # """, unsafe_allow_html=True)
+
+    # responsive_table = f"""
+    # <div class ="responsive-table">
+
+    # {char_table_latex_df_no_na}
+
+    # </div>
+    # """
+
+    # st.markdown(responsive_table, unsafe_allow_html=True)
+    # st.dataframe(char_table_latex_df_no_na, use_container_width=True)
+
+    # st.markdown(scaled_table)
+    # st.markdown("""
+    # <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    # """, unsafe_allow_html=True)
+
+    # html_content = f"""
+    # <div style="font-size: 100%; transform-origin: 0 0; transform: scale(0.8);">
+
+    # {table_markdown}
+
+    # </div>
+    # """
+    # st.markdown(html_content, unsafe_allow_html=True) 
+
+    char_table_var = f"""{char_table_markdown}"""
+
+    st.markdown(char_table_var, unsafe_allow_html=True)
     
     gamma_total_label = r"$\Gamma_{total}$"
     st.markdown(f"### {gamma_total_label}")
@@ -255,14 +377,14 @@ def geometry_change():
     
     irreducible_table_ug = irreducible_table_ug[:-1]
     irreducible_table_no_na_ug = irreducible_table_ug.fillna("")
-    irreducible_formula_ug = f"{gamma_total_label} = {gamma_formula_notation(irreducible_table_ug)}"
+    irreducible_formula_ug = f"{gamma_vib_label_ug} = {gamma_formula_notation(irreducible_table_ug)}"
     
     if(current_version == "UG"):
         st.markdown(f"### Breakdown of {gamma_vib_label_ug} into irreducible representations")
         st.markdown(irreducible_table_no_na_ug.to_markdown(index = False))
         st.markdown(f"{irreducible_formula_ug}")
     
-    reduced_rotation = irreducible_table[~irreducible_table['$Rotational$'].isnull()]
+    reduced_rotation = irreducible_table[~irreducible_table['$Rotational$'].isnull()] 
     #subtract the representation that corresponds to the rotational motion
     
     # Create a boolean mask for elements in 'col1' that don't contain 'Rz'
