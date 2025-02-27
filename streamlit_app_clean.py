@@ -112,8 +112,8 @@ color_styles = ['spectrum', 'element', 'chain', 'custom']
 styles = ['stick', 'line', 'sphere', 'cartoon']
 
 version_dictionary = {
-    "Selected Stretching Vibration": "UG", 
-    "Full Vibration": "G"
+    "Selected Stretching Vibrations": "UG", 
+    "Full Vibrations": "G"
 }
 
 versions = ["Selected Stretching Vibration", "Full Vibration"]
@@ -126,10 +126,23 @@ color_options = {
     'custom': 'red'  # You can change this to any custom color
 }
 
-selected_version = st.sidebar.selectbox("Select Version", versions)
+selected_version = st.sidebar.selectbox("Select Version", version_dictionary.keys())
 selected_geometry =  st.sidebar.selectbox("Select Geometry", geometry_options)
 selected_color_style = st.sidebar.selectbox('Select Color Style', color_styles)
 selected_style = st.sidebar.selectbox('Select Style', styles)
+current_version = version_dictionary[selected_version]
+if(current_version == "G"):
+    st.markdown("## Vibrational Modes ")
+    st.markdown('<span style="font-size: 18px;"> In chemistry, the study of molecular vibrations plays a critical role in understanding the chemical and physical properties of molecules. The vibrational spectroscopy techniques of IR (infrared) and Raman spectroscopy are used extensively to study the vibrational properties of molecules. Group theory and symmetry principles provide a powerful framework for understanding the vibrational modes of molecules and predicting their corresponding IR and Raman spectral bands. </span>', unsafe_allow_html=True)
+    st.markdown("""
+        -	For a set of N atoms, there is 3N degrees of freedom in a 3-dimensional space
+        -	3 of these correlate translational motion: Trans(XYZ)
+        -	3 more correspond to rotational motion Rot(RxRyRz) and 2 in linear molecules.
+        -	Thus, each molecule has 3N-6 (3N-5 for linear molecules) normal modes of vibration
+    """)
+elif(current_version == "UG"):
+    st.markdown("## Selected Strectching Vibrational Modes  ")
+    st.markdown('<span style="font-size: 18px;"> Think of stretching vibrations as molecular yoga poses! Similar to how various yoga postures stretch and flex various body regions, various stretching vibrations in molecules stretch and flex various chemical bonds. IR and Raman vibrational frequencies are important for characterizing functional groups and chemical properties. Scientists can use IR and Raman spectra to learn more about molecular yoga poses and properties, and possibly find a new way to stretch molecules. </span>', unsafe_allow_html=True)
 
 # st.markdown("""
 #     <style>
@@ -163,7 +176,7 @@ def geometry_change():
     # formatted_datetime = now.strftime("%m-%d-%Y %H:%M:%S")
     # print(f"NEW RUN ({formatted_datetime})---------------------------------------------------")
     
-    current_version = version_dictionary[selected_version]
+    
     # st.markdown(f"Selected version: {current_version}")
     
     idx2 = [group["Geometry"] for group in groups].index(selected_geometry)
@@ -219,6 +232,28 @@ def geometry_change():
     view = py3Dmol.view(data=file_list[idx2])
     # Apply the selected color style and style
     view.setStyle({selected_style: {'color': color_options[selected_color_style]}})
+    
+    line_width = 3
+    # Add the axes of symmetry
+    view.addCylinder({
+        'start': {'z': 0, 'y': 0, 'x': -line_width},
+        'end': {'z': 0, 'y': 0, 'x': line_width},
+        'radius': 0.05,
+        'color': 'red'
+    })
+    view.addCylinder({
+        'start': {'x': 0, 'z': 0, 'y': -line_width},
+        'end': {'x': 0, 'z': 0, 'y': line_width},
+        'radius': 0.05,
+        'color': 'green'
+    })
+    view.addCylinder({
+        'start': {'x': 0, 'y': 0, 'z': -line_width},
+        'end': {'x': 0, 'y': 0, 'z': line_width},
+        'radius': 0.05,
+        'color': 'blue'
+    })
+
     view.zoomTo()
     # axes_var = {"origin": {"x": 0, "y": 0, "z": 0},
     #             "axes": [{
@@ -262,10 +297,53 @@ def geometry_change():
     char_table_latex_df["$Quadratic$"] = format_superscripts_from_df_column(char_table_latex_df, "$Quadratic$")
     char_table_latex_df["$Rotational$"] = format_rotational_latex(char_table_latex_df, "$Rotational$")
     char_table_latex_df_no_na = char_table_raw_df[:-2].fillna("")
+    # symmetry_operations_latex = char_table_latex_df.iloc[:0, 1:-3]
+    symmetry_operations_latex = char_table_latex_df.columns[1:-3]
+    # symmetry_operations_latex.reset_index()
+    # for op in symmetry_operations_latex:
+    #     st.markdown(op)
+    # # print(f"data: \n{symmetry_operations_latex}")
+    # st.markdown(symmetry_operations_latex)
+    
+    # Create a container for the buttons and viewer
+    container = st.container()
+    # Assuming you have your DataFrame 'df' already loaded
+    # button_columns = df.columns[:-3]  # Exclude the last 3 columns
+
+    # Create buttons in the container
+    # with container:
+    #     # for col in symmetry_operations_latex:
+    #     #     value = char_table_latex_df.iloc[0][col]
+    #     #     print(f"value")
+    #     #     if st.button(f"\({value}\)", key=f"{col}"):  # Wrap the value in LaTeX inline math delimiters
+    #     #         # Button action here
+    #     #         st.write(f"Button \({value}\) clicked")
+    #     # Get the first row of the DataFrame, excluding the last 3 columns
+    #     button_data = char_table_latex_df.iloc[0, 1:-3]
+        
+    #     # Create a horizontal layout for buttons
+    #     cols = st.columns(len(button_data))
+        
+    #     for i, (col_name, value) in enumerate(button_data.items()):
+    #         with cols[i]:
+    #             # Use LaTeX rendering for button labels
+    #             button_label = f"$${col_name}$$"
+    #             # st.markdown(f"button label: {button_label}, colname: {col_name}")
+    #             if st.button(button_label, key=f"button_{i}"):
+    #                 # Handle button click
+    #                 st.write(f"Clicked: {col_name}")
+    #                 # Create a copy of the model for rotation
+    #                 # rotated_view = view.clone()
+    #                 view.animate({'axis': [1, 1, 0], 'angle': 45, 'step': 1, 'ms': 1000})
+    #                 # view.rotate(45, {"x": 1, "y": 1, "z": 0})
+    #                 # view.render()
+    #     showmol(view, height=500, width=800)
+        
     
     char_table_markdown = char_table_latex_df_no_na.to_markdown(index = False)
     st.markdown(f"## Character table")
 
+    #TO-DO: figure out how to do dynamic scaling of tables
     # scaled_table = f"""
     # <div style="font-size: 0.8em;">
 
@@ -314,6 +392,8 @@ def geometry_change():
     char_table_var = f"""{char_table_markdown}"""
 
     st.markdown(char_table_var, unsafe_allow_html=True)
+    if(current_version == "UG"):
+        st.markdown("The number of irreducible representations is usually calculated by taking the sum of the products of the number of unmoved vectors, the coefficient of each symmetry operation, and the character of the irreducible representation and dividing the sum by the order of the group.")
     
     gamma_total_label = r"$\Gamma_{total}$"
     st.markdown(f"### {gamma_total_label}")
@@ -351,7 +431,12 @@ def geometry_change():
     
     # gamma_total_label_ug = r"$\Gamma_{total UG}$"
     if(current_version == "G"):
+        gamma_total_equation = r"$\Gamma_{tot} = \Gamma_{trans} + \Gamma_{vib} + \Gamma_{rot}$"
+        st.markdown("#### Total reducible representation for all degrees of freedom")
+        st.markdown(gamma_total_equation)
         st.markdown(gamma_total_table.to_markdown(index = False))
+        st.markdown(f"{gamma_xyz_label} = Atomic contributions by symmetry operations to the reducible representations.")
+        st.markdown(f"$\#_{{{number_unmoved_label_ug}}}$ = Number of unmoved atoms after symmetry operation.")
     elif(current_version == "UG"):    
         st.markdown(gamma_total_table_ug.to_markdown(index = False))
     # st.markdown(f"### {gamma_total_label_ug}")
@@ -367,6 +452,7 @@ def geometry_change():
     irreducible_formula = f"{gamma_total_label} = {gamma_formula_notation(irreducible_table)}"
     if(current_version == "G"):
         st.markdown(f"### Breakdown of {gamma_total_label} into irreducible representations")
+        st.markdown(f"Break down the total reducible representation into irreducible representations (M > 0) by multiplying with each character of the character table and dividing the sum by the order of the group. Then, subtract translational and Rotational to obtain Vibrational modes.")
         st.markdown(irreducible_table_no_na.to_markdown(index = False))
         st.markdown(f"{irreducible_formula}")
     

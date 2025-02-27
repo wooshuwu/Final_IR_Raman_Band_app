@@ -1,7 +1,9 @@
 import streamlit as st
 import py3Dmol
+from stmol import showmol
 import streamlit.components.v1 as components
-
+import pandas as pd
+import json
 # Set page config for better mobile experience
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
@@ -14,10 +16,130 @@ with st.sidebar:
 st.title("3D Molecule Viewer and Data")
 
 # py3Dmol viewer
-viewer = py3Dmol.view(query='pdb:1A2C')
-viewer.setStyle({'cartoon': {'color': 'spectrum'}})
-viewer_html = viewer.render()
+# viewer = py3Dmol.view(query='pdb:1A2C')
+# viewer.setStyle({'cartoon': {'color': 'spectrum'}})
+# viewer_html = viewer.render()
+# Render py3Dmol viewer with responsive size
+# viewer_html = f"""
+# <div id="viewer" style="height: 400px; width: 100%;"></div>
+# {viewer.render()}
+# {screen_width_js}
+# """
+# components.html(viewer_html, height=450)
+
+# Initialize session state for view reset
+# if 'reset_view' not in st.session_state:
+#     st.session_state.reset_view = False
+
+# # Create a container for the viewer and button
+# container = st.container()
+
+# # Add a reset button above the viewer
+# if container.button("Reset View"):
+#     st.session_state.reset_view = True
+
+# # Create the py3Dmol viewer
+# view = py3Dmol.view(query='pdb:1ubq')
+# view.setStyle({'cartoon': {'color': 'spectrum'}})
+
+# # Reset the view if the button was clicked
+# if st.session_state.reset_view:
+#     view.zoomTo()
+#     st.session_state.reset_view = False
+
+# # Show the viewer in the container
+# with container:
+#     showmol(view, height=500, width=800)
 # st.components.v1.html(viewer_html, height=400)
+
+def create_viewer():
+    view = py3Dmol.view(query='pdb:1ubq')
+    view.setStyle({'cartoon': {'color': 'spectrum'}})
+    view.zoomTo()
+    return view
+view = py3Dmol.view(query='pdb:1ubq')
+view.setStyle({'cartoon': {'color': 'spectrum'}})
+view.zoomTo()
+
+def animate_rotation(view):
+    view.animate({'axis': [0, 1, 0], 'angle': 180, 'step': 1}, 1000)
+
+st.title("180-Degree Rotation Animation")
+
+# if 'viewer' not in st.session_state:
+#     st.session_state.viewer = create_viewer()
+#     st.session_state.animate = False
+
+if st.button("Rotate 180 Degrees"):
+    st.session_state.animate = True
+
+if st.session_state.animate:
+    animate_rotation(st.session_state.viewer)
+    st.session_state.animate = False
+
+showmol(st.session_state.viewer, height=500, width=800)
+
+###
+# Create a DataFrame with rotation details
+# df_rotations = pd.DataFrame({
+#     'Label': [r'\alpha', r'\beta', r'\gamma', r'\delta'],
+#     'Axis': ['x', 'y', 'z', 'xy'],
+#     'Angle': [90, 180, 270, 360],
+#     'Duration': [1000, 2000, 1500, 10000]
+# })
+
+# def create_buttons_and_rotations(df, view):
+#     cols = st.columns(len(df))
+#     for i, (_, row) in enumerate(df.iterrows()):
+#         with cols[i]:
+#             if st.button(f"$${row['Label']}$$", key=f"button_{i}"):
+#                 animate_rotation(view, row)
+
+# def animate_rotation(view, rotation_data):
+#     print("owo")
+#     axis = rotation_data['Axis']
+#     angle = rotation_data['Angle']
+#     duration = rotation_data['Duration']
+    
+#     if axis == 'xy':
+#         axis = [1, 1, 0]
+#     else:
+#         axis = [1 if ax == axis else 0 for ax in ['x', 'y', 'z']]
+    
+#     view.animate({'axis': axis, 'angle': angle, 'step': 1}, duration)
+#     print(f"uwu: {duration}")
+
+# def create_viewer():
+#     view = py3Dmol.view(query='pdb:1ubq')
+#     view.setStyle({'cartoon': {'color': 'spectrum'}})
+    
+    
+#     # Get the PDB data of the first model
+#     # pdb_data = view.getModel().getPDB()
+#     # # Serialize the PDB data
+#     # serialized_data = json.dumps({"pdb_data": pdb_data})
+#     # # Deserialize the data
+#     # deserialized_data = json.loads(serialized_data)
+#     # # Add a copy of the model using the PDB data
+#     # view.addModel(deserialized_data["pdb_data"], "pdb")
+#     view.addModel(query='pdb:1ubq', format='pdb')
+#     view.setStyle({'model': -1}, {'cartoon': {'color': 'grey'}})
+    
+#     view.zoomTo()
+#     return view
+
+# # Create the viewer
+# viewer = create_viewer()
+
+# # Create a container for buttons and viewer
+# container = st.container()
+
+# # Add buttons and viewer to the container
+# with container:
+#     create_buttons_and_rotations(df_rotations, viewer)
+#     showmol(viewer, height=500, width=800)
+#     # viewer.animate({'axis': [1, 1, 0], 'angle': 45, 'step': 1, 'ms': 10000})
+
 
 # Markdown table
 st.markdown("""
@@ -63,13 +185,7 @@ screen_width_js = """
 </script>
 """
 
-# Render py3Dmol viewer with responsive size
-viewer_html = f"""
-<div id="viewer" style="height: 400px; width: 100%;"></div>
-{viewer.render()}
-{screen_width_js}
-"""
-components.html(viewer_html, height=450)
+
 
 st.markdown("""
 <style>
