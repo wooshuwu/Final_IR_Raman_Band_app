@@ -8,3 +8,6 @@ sympy
 openpyxl
 tabulate
 datetime
+streamlit
+altair>=4,<6
+vega_datasets
